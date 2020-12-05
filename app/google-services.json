@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1042745337529",
+    "project_id": "loveapp-75f14",
+    "storage_bucket": "loveapp-75f14.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1042745337529:android:48ed8e8d3b536940f31d68",
+        "android_client_info": {
+          "package_name": "com.dostal.loveapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1042745337529-jtl8qaq9e12k1d2j1ornop6562g0r3c2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCusqK45xwQ1VTXtEg3k76ja29k26wtFkk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1042745337529-jtl8qaq9e12k1d2j1ornop6562g0r3c2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -15,9 +15,15 @@
         android:text="Wer bist du?"/>
 
     <Spinner
-        android:id="@+id/spinernames"
+        android:id="@+id/spinnernames"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/confirm"
+        android:id="@+id/buttonConfirmUser"
+        />
 
 
 </LinearLayout>
