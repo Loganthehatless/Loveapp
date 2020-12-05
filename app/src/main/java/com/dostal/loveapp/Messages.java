@@ -3,6 +3,9 @@ package com.dostal.loveapp;
 public class Messages {
     private String message;
 
+    public Messages() {
+    }
+
     public Messages(String message) {
         this.message = message;
     }

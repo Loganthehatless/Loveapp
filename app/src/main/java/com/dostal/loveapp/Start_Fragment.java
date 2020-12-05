@@ -45,14 +45,18 @@ public class Start_Fragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_start, container, false);
 
+        //simulation();
+
+        return view;
+    }
+
+    private void simulation() {
         User user = new User("Maik", "User", false, false);
         userRef.add(user);
         User user2 = new User("Sandra", "User", false, false);
         userRef.add(user2);
         User user3 = new User("Lukas", "User", false, false);
         userRef.add(user3);
-
-        return view;
     }
 
     @Override
