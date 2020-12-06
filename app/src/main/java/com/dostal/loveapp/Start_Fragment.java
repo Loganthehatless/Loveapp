@@ -1,5 +1,7 @@
 package com.dostal.loveapp;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -37,7 +39,8 @@ public class Start_Fragment extends Fragment {
     private Button buttonConfirmUser;
     private String userid;
     private String user;
-    private boolean clicked = false;
+
+    final String prefNameFirstStart="firstappstart";
 
 
     @Nullable
@@ -96,8 +99,7 @@ public class Start_Fragment extends Fragment {
             public void onClick(View v) {
                 changestatus(userid);
                 final NavController navController = Navigation.findNavController(view);
-                Start_FragmentDirections.actionStartFragmentToMainFragment();
-                navController.navigate(R.id.action_start_Fragment_to_main_Fragment);
+
             }
         });
         super.onViewCreated(view, savedInstanceState);
@@ -166,6 +168,18 @@ public class Start_Fragment extends Fragment {
             });
 
         } catch (Exception e) {
+        }
+    }
+    private boolean firstlogin() { //TODO first login checken und davon abhängig machen in welches fragment
+        SharedPreferences preferences = getActivity().getPreferences(Context.MODE_PRIVATE);
+        if (preferences.getBoolean(prefNameFirstStart, true)) {
+
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putBoolean(prefNameFirstStart, false);
+            editor.commit();
+            return true;
+        } else {
+            return false;
         }
     }
 }

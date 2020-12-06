@@ -3,16 +3,24 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/start_Fragment">
+    app:startDestination="@id/decision_Fragment">
+    <fragment
+        android:id="@+id/decision_Fragment"
+        android:name="com.dostal.loveapp.Decision_Fragment"
+        android:label="decision_fragment"
+        tools:layout="@layout/decision_fragment" >
+        <action
+            android:id="@+id/action_decision_Fragment_to_main_Fragment"
+            app:destination="@id/main_Fragment" />
+        <action
+            android:id="@+id/action_decision_Fragment_to_start_Fragment"
+            app:destination="@id/start_Fragment" />
+    </fragment>
     <fragment
         android:id="@+id/start_Fragment"
         android:name="com.dostal.loveapp.Start_Fragment"
         android:label="fragment_start"
-        tools:layout="@layout/fragment_start" >
-        <action
-            android:id="@+id/action_start_Fragment_to_main_Fragment"
-            app:destination="@id/main_Fragment" />
-    </fragment>
+        tools:layout="@layout/fragment_start" />
     <fragment
         android:id="@+id/main_Fragment"
         android:name="com.dostal.loveapp.Main_Fragment"
