@@ -39,8 +39,7 @@ public class Start_Fragment extends Fragment {
     private Button buttonConfirmUser;
     private String userid;
     private String user;
-
-    final String prefNameFirstStart="firstappstart";
+    final static String PREFNAME_USER = "UserId";
 
 
     @Nullable
@@ -60,11 +59,13 @@ public class Start_Fragment extends Fragment {
         userRef.add(user2);
         User user3 = new User("Lukas", "User", false, false);
         userRef.add(user3);
+        User user4 = new User("Dennis", "User", false, false);
+        userRef.add(user4);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        final NavController navController = Navigation.findNavController(view);
+
         buttonConfirmUser = view.findViewById(R.id.buttonConfirmUser);
         spinner = view.findViewById(R.id.spinnernames);
         ArrayList<String> arrayList = new ArrayList<>();
@@ -84,8 +85,9 @@ public class Start_Fragment extends Fragment {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String name = spinner.getSelectedItem().toString();
-                userid = getuserId(name);
+                user = spinner.getSelectedItem().toString();
+                userid = getuserId(user);
+
             }
 
             @Override
@@ -97,8 +99,15 @@ public class Start_Fragment extends Fragment {
         buttonConfirmUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                changestatus(userid);
-                final NavController navController = Navigation.findNavController(view);
+                if (user.equals("")) {
+                    Toast.makeText(getActivity(), "Bitte ein Nutzer wählen", Toast.LENGTH_SHORT).show();
+                } else {
+                    changestatus(userid);
+                    final NavController navController = Navigation.findNavController(view);
+                    setuserID();
+                    navController.navigate(R.id.action_start_Fragment_to_decision_Fragment);
+                }
+
 
             }
         });
@@ -107,8 +116,9 @@ public class Start_Fragment extends Fragment {
 
     @Override
     public void onStart() {
-
         super.onStart();
+
+
     }
 
     private void changestatus(String getuserId) {
@@ -119,8 +129,10 @@ public class Start_Fragment extends Fragment {
             @Override
             public void onSuccess(Void aVoid) {
                 Toast.makeText(getActivity(), "yay", Toast.LENGTH_LONG).show();
+
             }
         });
+
     }
 
     private String getuserId(String name) {
@@ -134,7 +146,7 @@ public class Start_Fragment extends Fragment {
                             User user = document.toObject(User.class);
                             user.setId(document.getId());
                             userid = user.getId();
-                            Toast.makeText(getActivity(), user.getId(), Toast.LENGTH_LONG).show();
+                            //Toast.makeText(getActivity(), user.getId(), Toast.LENGTH_LONG).show();
                         }
                     }
                 });
@@ -147,6 +159,7 @@ public class Start_Fragment extends Fragment {
 
         spinner = view.findViewById(R.id.spinnernames);
         try {
+
             userRef.whereEqualTo("isclaimed", false).addSnapshotListener(getActivity(), new EventListener<QuerySnapshot>() {
                 @Override
                 public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -170,16 +183,15 @@ public class Start_Fragment extends Fragment {
         } catch (Exception e) {
         }
     }
-    private boolean firstlogin() { //TODO first login checken und davon abhängig machen in welches fragment
-        SharedPreferences preferences = getActivity().getPreferences(Context.MODE_PRIVATE);
-        if (preferences.getBoolean(prefNameFirstStart, true)) {
 
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putBoolean(prefNameFirstStart, false);
-            editor.commit();
-            return true;
-        } else {
-            return false;
-        }
+    private void setuserID() {
+        SharedPreferences preferences = getActivity().getPreferences(Context.MODE_PRIVATE);
+
+
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(PREFNAME_USER,userid);
+        editor.apply();
+
     }
+
 }

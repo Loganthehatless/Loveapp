@@ -1,6 +1,8 @@
 package com.dostal.loveapp;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -34,7 +36,9 @@ public class Main_Fragment extends Fragment {
     private FloatingActionButton buttonSend;
     private ArrayList<Messages> messagesArrayList;
     private RecyclerView recyclerView;
+    private int listlength;
     final private String path = "Messages";
+    final static String PREFNAME_USER="UserId";
 
     final private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference messageRef = db.collection(path);
@@ -43,6 +47,7 @@ public class Main_Fragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
+
 
         return view;
     }
@@ -62,7 +67,12 @@ public class Main_Fragment extends Fragment {
                 return false;
             }
         });
+        if (getArguments()!=null){
+            Main_FragmentArgs args=Main_FragmentArgs.fromBundle(getArguments());
+            String test=args.getUserIdfromDecision();
+            Toast.makeText(getActivity(),test,Toast.LENGTH_LONG).show();
 
+        }
         //simulation();
 
         buttonSend.setOnClickListener(new View.OnClickListener() {
@@ -72,24 +82,28 @@ public class Main_Fragment extends Fragment {
             }
         });
 
-        messageRef.addSnapshotListener(getActivity(), new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                messagesArrayList.clear();
-                if (error != null) {
-                    return;
+        try {
+            messageRef.orderBy("counter").addSnapshotListener(getActivity(), new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                    messagesArrayList.clear();
+                    if (error != null) {
+                        return;
+                    }
+                    for (QueryDocumentSnapshot documentSnapshot : value) {
+                        Messages messages = documentSnapshot.toObject(Messages.class);
+                        String messageContent = messages.getMessage();
+
+                        messagesArrayList.add(new Messages(messageContent));
+
+                    }
+                    listlength=messagesArrayList.size();
+                    setAdapter();
+
                 }
-                for (QueryDocumentSnapshot documentSnapshot : value) {
-                    Messages messages = documentSnapshot.toObject(Messages.class);
-                    String messageContent = messages.getMessage();
+            });
+        }catch (Exception e){}
 
-                    messagesArrayList.add(new Messages(messageContent));
-
-                }
-                setAdapter();
-
-            }
-        });
 
 
         super.onViewCreated(view, savedInstanceState);
@@ -118,7 +132,8 @@ public class Main_Fragment extends Fragment {
         if (stringmessage.isEmpty()) {
             return;
         }
-        Messages newMessage = new Messages(stringmessage);
+        Messages newMessage = new Messages(stringmessage,listlength+1);
+
         messageRef.add(newMessage).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
             @Override
             public void onSuccess(DocumentReference documentReference) {
@@ -127,8 +142,7 @@ public class Main_Fragment extends Fragment {
         });
         editTextTextMessage.setText("");
 
-
-
     }
+    // TODO Ey bruder wir müssen noch checken wie wir das mit der Rolle machen viel spß Zukunfts ich HDGDL
 
 }

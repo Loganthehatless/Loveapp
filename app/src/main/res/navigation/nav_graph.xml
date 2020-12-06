@@ -8,7 +8,7 @@
         android:id="@+id/decision_Fragment"
         android:name="com.dostal.loveapp.Decision_Fragment"
         android:label="decision_fragment"
-        tools:layout="@layout/decision_fragment" >
+        tools:layout="@layout/fragment_decision" >
         <action
             android:id="@+id/action_decision_Fragment_to_main_Fragment"
             app:destination="@id/main_Fragment" />
@@ -20,10 +20,19 @@
         android:id="@+id/start_Fragment"
         android:name="com.dostal.loveapp.Start_Fragment"
         android:label="fragment_start"
-        tools:layout="@layout/fragment_start" />
+        tools:layout="@layout/fragment_start" >
+        <action
+            android:id="@+id/action_start_Fragment_to_decision_Fragment"
+            app:destination="@id/decision_Fragment" />
+    </fragment>
     <fragment
         android:id="@+id/main_Fragment"
         android:name="com.dostal.loveapp.Main_Fragment"
         android:label="fragment_main"
-        tools:layout="@layout/fragment_main" />
+        tools:layout="@layout/fragment_main" >
+        <argument
+            android:name="userIdfromDecision"
+            app:argType="string"
+            android:defaultValue="Default" />
+    </fragment>
 </navigation>
