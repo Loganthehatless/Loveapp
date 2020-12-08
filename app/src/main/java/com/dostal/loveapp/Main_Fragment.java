@@ -9,6 +9,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -19,10 +20,13 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -33,20 +37,25 @@ import java.util.ArrayList;
 
 public class Main_Fragment extends Fragment {
     private EditText editTextTextMessage;
-    private FloatingActionButton buttonSend;
+    private Button buttonSend;
     private ArrayList<Messages> messagesArrayList;
     private RecyclerView recyclerView;
     private int listlength;
-    final private String path = "Messages";
-    final static String PREFNAME_USER="UserId";
+    final static String PATHMESSAGES = "Messages";
+    final static String PATHUSER = "User";
+    final static String PREFNAME_USER = "UserId";
+    final static String KEY_USERROLE = "role";
+    final static String ROLE_ADMIN = "Admin";
+    private String userrole="Default";
 
     final private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private CollectionReference messageRef = db.collection(path);
+    private CollectionReference messageRef = db.collection(PATHMESSAGES);
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
+        checkforWrite();
 
 
         return view;
@@ -67,18 +76,21 @@ public class Main_Fragment extends Fragment {
                 return false;
             }
         });
-        if (getArguments()!=null){
-            Main_FragmentArgs args=Main_FragmentArgs.fromBundle(getArguments());
-            String test=args.getUserIdfromDecision();
-            Toast.makeText(getActivity(),test,Toast.LENGTH_LONG).show();
 
-        }
         //simulation();
 
         buttonSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendmessage(view);
+                while (userrole.equals("")){
+                    checkforWrite();
+                }
+                if (userrole.equals(ROLE_ADMIN)){
+                    sendmessage(view);
+                }else{
+                    Toast.makeText(getActivity(),"Du darfst keine Nachrichten schicken",Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 
@@ -87,6 +99,7 @@ public class Main_Fragment extends Fragment {
                 @Override
                 public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                     messagesArrayList.clear();
+
                     if (error != null) {
                         return;
                     }
@@ -97,24 +110,29 @@ public class Main_Fragment extends Fragment {
                         messagesArrayList.add(new Messages(messageContent));
 
                     }
-                    listlength=messagesArrayList.size();
+                    listlength = messagesArrayList.size();
+
                     setAdapter();
 
                 }
             });
-        }catch (Exception e){}
-
+        } catch (Exception e) {
+        }
 
 
         super.onViewCreated(view, savedInstanceState);
     }
 
     private void setAdapter() {
+
         RecyclerAdapter adapter = new RecyclerAdapter(messagesArrayList);
+        adapter.notifyDataSetChanged();
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
+        recyclerView.smoothScrollToPosition(listlength);
     }
 
 
@@ -128,11 +146,19 @@ public class Main_Fragment extends Fragment {
     private void sendmessage(View view) {
 
         String stringmessage = editTextTextMessage.getText().toString();
-
+        String userId="";
         if (stringmessage.isEmpty()) {
             return;
         }
-        Messages newMessage = new Messages(stringmessage,listlength+1);
+        if (stringmessage.equals("Nachricht")) {
+            editTextTextMessage.setText("");
+            return;
+        }
+        if (getArguments() != null) {
+            Main_FragmentArgs args = Main_FragmentArgs.fromBundle(getArguments());
+            userId = args.getUserIdfromDecision();
+        }
+        Messages newMessage = new Messages(stringmessage, listlength + 1,userId);
 
         messageRef.add(newMessage).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
             @Override
@@ -143,6 +169,25 @@ public class Main_Fragment extends Fragment {
         editTextTextMessage.setText("");
 
     }
-    // TODO Ey bruder wir müssen noch checken wie wir das mit der Rolle machen viel spß Zukunfts ich HDGDL
+
+    // TODO Ey bruder wir müssen noch checken wie wir das mit der Rolle machen viel spaß Zukunfts ich HDGDL
+    private void checkforWrite() {
+
+        if (getArguments() != null) {
+            Main_FragmentArgs args = Main_FragmentArgs.fromBundle(getArguments());
+            String userId = args.getUserIdfromDecision();
+            DocumentReference userRef = db.collection(PATHUSER).document(userId);
+            userRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    if (documentSnapshot.exists()) {
+                        userrole = documentSnapshot.getString(KEY_USERROLE);
+                        Toast.makeText(getActivity(), userrole, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
+
+    }
 
 }

@@ -57,8 +57,10 @@ public class Decision_Fragment extends Fragment {
             editor.apply();
             return true;
         } else {
-            userId=preferences.getString(PREFNAME_USER,"hallo");
-            Toast.makeText(getActivity(),userId,Toast.LENGTH_LONG).show();
+            userId=preferences.getString(PREFNAME_USER,"");
+            if (userId.equals("")){
+                return true;//TODO eleganterern weg suchen um zu verhindern dass man in den Weiteren Bildschirm ohne Login Kommt
+            }
             return false;
         }
     }

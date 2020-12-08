@@ -10,12 +10,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyViewHolder> {
     private ArrayList<Messages> messagesArrayList;
+    private CircleImageView circleImageView;
+
 
     public RecyclerAdapter(ArrayList<Messages>messagesArrayList)
     {
         this.messagesArrayList=messagesArrayList;
+
     }
     public class MyViewHolder extends RecyclerView.ViewHolder{
         private TextView message;
@@ -24,6 +29,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyView
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             message= itemView.findViewById(R.id.message);
+            circleImageView=itemView.findViewById(R.id.chatimage);
+
+            //((LinearLayoutManager)myRecyclerView.getLayoutManager()).setStackFromEnd(true);
 
         }
     }

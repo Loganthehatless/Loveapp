@@ -5,8 +5,17 @@ import java.security.Timestamp;
 public class Messages {
     private String message;
     private int counter=0;
+    private String sentuserId;
 
     public Messages() {
+    }
+
+    public String getSentuserId() {
+        return sentuserId;
+    }
+
+    public void setSentuserId(String sentuserId) {
+        this.sentuserId = sentuserId;
     }
 
     public int getCounter() {
@@ -17,9 +26,10 @@ public class Messages {
         this.counter = counter;
     }
 
-    public Messages(String message, int counter) {
+    public Messages(String message, int counter, String sentuserId) {
         this.message = message;
         this.counter = counter;
+        this.sentuserId = sentuserId;
     }
 
     public Messages(String message) {

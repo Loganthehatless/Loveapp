@@ -4,25 +4,29 @@
     android:id="@+id/parent_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#4CAF50"
-
-    android:padding="15dp">
+    android:background="@drawable/custom_button"
+    android:padding="10dp"
+    android:layout_marginTop="1dp"
+    android:layout_marginBottom="1dp"
+    android:layout_marginLeft="2dp"
+    android:layout_marginRight="2dp">
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/image"
+        android:id="@+id/chatimage"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:src="@drawable/maik" />
+        android:src="@drawable/ic_chatbild_foreground"/>
 
     <TextView
         android:id="@+id/message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_toRightOf="@+id/image"
-        android:padding="5dp"
+        android:layout_toRightOf="@+id/chatimage"
+        android:layout_marginLeft="5dp"
         android:text="Text"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
+
         android:textSize="20sp" />
 
 </RelativeLayout>
