@@ -30,6 +30,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -39,35 +40,48 @@ public class Main_Fragment extends Fragment {
     private EditText editTextTextMessage;
     private Button buttonSend;
     private ArrayList<Messages> messagesArrayList;
+    private ArrayList<Messages> messagesTempArrayList;
     private RecyclerView recyclerView;
-    private int listlength;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+    private String userrole = "Default";
+    private String userId = "";
     final static String PATHMESSAGES = "Messages";
     final static String PATHUSER = "User";
     final static String PREFNAME_USER = "UserId";
     final static String KEY_USERROLE = "role";
     final static String ROLE_ADMIN = "Admin";
-    private String userrole="Default";
+
+
+
 
     final private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private CollectionReference messageRef = db.collection(PATHMESSAGES);
+    private final CollectionReference messageRef = db.collection(PATHMESSAGES);
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         checkforWrite();
+        recyclerView = view.findViewById(R.id.recyclerviewMessages);
 
 
         return view;
     }
 
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+
         buttonSend = view.findViewById(R.id.buttonSend);
-        recyclerView = view.findViewById(R.id.recyclerviewMessages);
         editTextTextMessage = view.findViewById(R.id.editTextTextMessage);
         messagesArrayList = new ArrayList<>();
+        messagesTempArrayList = new ArrayList<>();
+        messagesArrayList.clear();
+        setAdapter();
+
+
         editTextTextMessage.setOnTouchListener(new View.OnTouchListener() {
             @SuppressLint("ClickableViewAccessibility")
             @Override
@@ -77,76 +91,89 @@ public class Main_Fragment extends Fragment {
             }
         });
 
-        //simulation();
 
         buttonSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                while (userrole.equals("")){
+                while (userrole.equals("")) {
                     checkforWrite();
                 }
-                if (userrole.equals(ROLE_ADMIN)){
+                if (userrole.equals(ROLE_ADMIN)) {
                     sendmessage(view);
-                }else{
-                    Toast.makeText(getActivity(),"Du darfst keine Nachrichten schicken",Toast.LENGTH_SHORT).show();
+                    recyclerView.smoothScrollToPosition(mAdapter.getItemCount());
+
+                } else {
+                    Toast.makeText(getActivity(), "Du darfst keine Nachrichten schicken", Toast.LENGTH_SHORT).show();
                 }
 
             }
         });
 
-        try {
-            messageRef.orderBy("counter").addSnapshotListener(getActivity(), new EventListener<QuerySnapshot>() {
-                @Override
-                public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                    messagesArrayList.clear();
 
-                    if (error != null) {
-                        return;
-                    }
-                    for (QueryDocumentSnapshot documentSnapshot : value) {
-                        Messages messages = documentSnapshot.toObject(Messages.class);
-                        String messageContent = messages.getMessage();
+        messageRef.orderBy("counter").addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                messagesTempArrayList.clear();
+                if (error != null) {
+                    return;
+                }
+                for (QueryDocumentSnapshot documentSnapshot : value) {
+                    Messages messages = documentSnapshot.toObject(Messages.class);
+                    messagesTempArrayList.add(messages);
 
-                        messagesArrayList.add(new Messages(messageContent));
-
-                    }
-                    listlength = messagesArrayList.size();
-
-                    setAdapter();
 
                 }
-            });
-        } catch (Exception e) {
-        }
+                messagesToRecycler(messagesTempArrayList);
+            }
+
+        });
 
 
         super.onViewCreated(view, savedInstanceState);
     }
 
+    private void messagesToRecycler(ArrayList<Messages> messagesTempArrayList) {
+
+        String message;
+        String id;
+        if (messagesTempArrayList.size()==0){
+
+            mAdapter.notifyDataSetChanged();
+            Toast.makeText(getActivity(),"leer",Toast.LENGTH_SHORT).show();
+
+        }
+
+        for (int i=messagesArrayList.size(); i < messagesTempArrayList.size(); i++) {
+            id=messagesTempArrayList.get(i).getSentuserId();
+            message=messagesTempArrayList.get(i).getMessage();
+
+            insertMessage(message,id);
+        }
+
+    }
+
+    public void insertMessage(String messege, String id) {
+        messagesArrayList.add(new Messages(messege, id));
+        mAdapter.notifyItemInserted(messagesArrayList.size());
+
+    }
+
+
     private void setAdapter() {
 
-        RecyclerAdapter adapter = new RecyclerAdapter(messagesArrayList);
-        adapter.notifyDataSetChanged();
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
-
-        recyclerView.setLayoutManager(layoutManager);
+        mLayoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setHasFixedSize(true);
+        mAdapter = new RecyclerAdapter(messagesArrayList);
+        recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(adapter);
-        recyclerView.smoothScrollToPosition(listlength);
+        recyclerView.setAdapter(mAdapter);
     }
 
-
-    private void simulation() {
-        messagesArrayList.add(new Messages("Morgen wieder eine Hure"));
-        messagesArrayList.add(new Messages("Gar kein Bock"));
-        messagesArrayList.add(new Messages("Folgt mir auf Insta"));
-
-    }
 
     private void sendmessage(View view) {
 
         String stringmessage = editTextTextMessage.getText().toString();
-        String userId="";
+
         if (stringmessage.isEmpty()) {
             return;
         }
@@ -158,7 +185,9 @@ public class Main_Fragment extends Fragment {
             Main_FragmentArgs args = Main_FragmentArgs.fromBundle(getArguments());
             userId = args.getUserIdfromDecision();
         }
-        Messages newMessage = new Messages(stringmessage, listlength + 1,userId);
+        Messages newMessage = new Messages(stringmessage, messagesTempArrayList.size(), userId);
+
+        //insertMessage(stringmessage,userId);
 
         messageRef.add(newMessage).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
             @Override

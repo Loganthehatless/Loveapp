@@ -2,8 +2,8 @@
     <!-- Base application theme. -->
     <style name="Theme.LoveApp" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">#42e6f5</item>
-        <item name="colorPrimaryVariant">#42e6f5</item>
+        <item name="colorPrimary">@color/BestBlue</item>
+        <item name="colorPrimaryVariant">@color/BestBlue</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/BestBlue</item>

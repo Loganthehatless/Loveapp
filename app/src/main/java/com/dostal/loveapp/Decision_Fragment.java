@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -19,6 +21,10 @@ public class Decision_Fragment extends Fragment {
     final static String PREF_FIRSTSTART="firstappstart";
     final static String PREFNAME_USER="UserId";
     private String userId;
+    private boolean start=false;
+    private TextView tvDennis;
+    private ImageView imageView;
+    private int i=0;
 
     @Nullable
     @Override
@@ -31,16 +37,38 @@ public class Decision_Fragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         final NavController navController=Navigation.findNavController(view);;
+        tvDennis=view.findViewById(R.id.dennisbacktext);
+        imageView=view.findViewById(R.id.gulliapproved);
+        tvDennis.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                i=i+1;
+                switch (i){
+                    case 1:
+                        tvDennis.setText("Selbst Schuld Drück noch mal");
+                        break;
+                    case 2:
+                        tvDennis.setText("Dennis ist ein Spast");
+                        imageView.visb
+                        break;
+
+                }
+
+
+            }
+        });
 
         if (firstlogin()==true){
             Decision_FragmentDirections.actionDecisionFragmentToStartFragment();
             navController.navigate(R.id.action_decision_Fragment_to_start_Fragment);
 
         }else{
-            Decision_FragmentDirections.ActionDecisionFragmentToMainFragment actionDecisionFragmentToMainFragment=Decision_FragmentDirections.actionDecisionFragmentToMainFragment();
-            actionDecisionFragmentToMainFragment.setUserIdfromDecision(userId);
-            navController.navigate(actionDecisionFragmentToMainFragment);
-
+            if (start==false){
+                Decision_FragmentDirections.ActionDecisionFragmentToMainFragment actionDecisionFragmentToMainFragment=Decision_FragmentDirections.actionDecisionFragmentToMainFragment();
+                actionDecisionFragmentToMainFragment.setUserIdfromDecision(userId);
+                navController.navigate(actionDecisionFragmentToMainFragment);
+                start=true;
+            }
 
         }
 

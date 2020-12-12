@@ -146,7 +146,6 @@ public class Start_Fragment extends Fragment {
                             User user = document.toObject(User.class);
                             user.setId(document.getId());
                             userid = user.getId();
-                            //Toast.makeText(getActivity(), user.getId(), Toast.LENGTH_LONG).show();
                         }
                     }
                 });

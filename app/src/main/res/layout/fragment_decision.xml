@@ -4,7 +4,22 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".Decision_Fragment"
-    android:layout_gravity="center"
-    android:orientation="vertical">>
+    android:gravity="center"
+    android:orientation="vertical">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Drück mich"
+        android:textAlignment="center"
+        android:id="@+id/dennisbacktext"
+        android:clickable="true"
+        />
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_below="@+id/dennisbacktext"
+        android:layout_centerHorizontal="true"
+        android:visibility="invisible"
+        android:id="@+id/gulliapproved"/>
 
 </RelativeLayout>

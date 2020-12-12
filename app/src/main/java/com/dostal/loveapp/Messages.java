@@ -32,6 +32,11 @@ public class Messages {
         this.sentuserId = sentuserId;
     }
 
+    public Messages(String message, String sentuserId) {
+        this.message = message;
+        this.sentuserId = sentuserId;
+    }
+
     public Messages(String message) {
         this.message = message;
     }
