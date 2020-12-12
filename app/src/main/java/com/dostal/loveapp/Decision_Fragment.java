@@ -49,7 +49,7 @@ public class Decision_Fragment extends Fragment {
                         break;
                     case 2:
                         tvDennis.setText("Dennis ist ein Spast");
-                        imageView.visb
+                        imageView.setVisibility(View.VISIBLE);
                         break;
 
                 }

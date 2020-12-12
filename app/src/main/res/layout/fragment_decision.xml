@@ -14,12 +14,14 @@
         android:id="@+id/dennisbacktext"
         android:clickable="true"
         />
+
     <ImageView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:id="@+id/gulliapproved"
+        android:layout_width="225dp"
+        android:layout_height="213dp"
         android:layout_below="@+id/dennisbacktext"
         android:layout_centerHorizontal="true"
-        android:visibility="invisible"
-        android:id="@+id/gulliapproved"/>
+        android:src="@drawable/approved"
+        android:visibility="invisible" />
 
 </RelativeLayout>
