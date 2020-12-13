@@ -87,6 +87,7 @@ public class Main_Fragment extends Fragment {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 editTextTextMessage.setText("");
+                recyclerView.smoothScrollToPosition(mAdapter.getItemCount());
                 return false;
             }
         });
@@ -100,7 +101,7 @@ public class Main_Fragment extends Fragment {
                 }
                 if (userrole.equals(ROLE_ADMIN)) {
                     sendmessage(view);
-                    recyclerView.smoothScrollToPosition(mAdapter.getItemCount());
+
 
                 } else {
                     Toast.makeText(getActivity(), "Du darfst keine Nachrichten schicken", Toast.LENGTH_SHORT).show();
@@ -155,6 +156,7 @@ public class Main_Fragment extends Fragment {
     public void insertMessage(String messege, String id) {
         messagesArrayList.add(new Messages(messege, id));
         mAdapter.notifyItemInserted(messagesArrayList.size());
+        recyclerView.smoothScrollToPosition(mAdapter.getItemCount());
 
     }
 
