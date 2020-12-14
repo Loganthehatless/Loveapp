@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,6 +26,7 @@ public class Decision_Fragment extends Fragment {
     private TextView tvDennis;
     private ImageView imageView;
     private int i=0;
+    private Button buttonBackToChat;
 
     @Nullable
     @Override
@@ -39,6 +41,7 @@ public class Decision_Fragment extends Fragment {
         final NavController navController=Navigation.findNavController(view);;
         tvDennis=view.findViewById(R.id.dennisbacktext);
         imageView=view.findViewById(R.id.gulliapproved);
+        buttonBackToChat=view.findViewById(R.id.buttonBackToChat);
         tvDennis.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -57,10 +60,19 @@ public class Decision_Fragment extends Fragment {
 
             }
         });
+        buttonBackToChat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Decision_FragmentDirections.actionDecisionFragmentToMainFragment();
+                navController.navigate(R.id.action_decision_Fragment_to_main_Fragment);
+            }
+        });
 
         if (firstlogin()==true){
-            Decision_FragmentDirections.actionDecisionFragmentToStartFragment();
-            navController.navigate(R.id.action_decision_Fragment_to_start_Fragment);
+            Decision_FragmentDirections.ActionDecisionFragmentToMainFragment actionDecisionFragmentToMainFragment=Decision_FragmentDirections.actionDecisionFragmentToMainFragment();
+            actionDecisionFragmentToMainFragment.setUserIdfromDecision(userId);
+            navController.navigate(actionDecisionFragmentToMainFragment);
+
 
         }else{
             if (start==false){

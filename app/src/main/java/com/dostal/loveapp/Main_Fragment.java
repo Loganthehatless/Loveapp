@@ -109,6 +109,14 @@ public class Main_Fragment extends Fragment {
 
             }
         });
+        buttonSend.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Toast.makeText(getContext(),"Test",Toast.LENGTH_SHORT).show();
+                changeUserStatusforOneMessage();
+                return false;
+            }
+        });
 
 
         messageRef.orderBy("counter").addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -131,6 +139,12 @@ public class Main_Fragment extends Fragment {
 
 
         super.onViewCreated(view, savedInstanceState);
+    }
+
+    private void changeUserStatusforOneMessage() {
+        FirebaseFirestore updateUserDb = FirebaseFirestore.getInstance();
+        CollectionReference updateUser=updateUserDb.collection("User");
+        //TODO updates mal in die User Klasse umziehen damit man es vereinheitlicht
     }
 
     private void messagesToRecycler(ArrayList<Messages> messagesTempArrayList) {

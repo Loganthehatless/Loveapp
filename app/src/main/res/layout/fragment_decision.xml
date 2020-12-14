@@ -6,22 +6,32 @@
     tools:context=".Decision_Fragment"
     android:gravity="center"
     android:orientation="vertical">
+
+
     <TextView
+        android:id="@+id/dennisbacktext"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Drück mich"
-        android:textAlignment="center"
-        android:id="@+id/dennisbacktext"
         android:clickable="true"
-        />
+        android:text="Drück mich"
+        android:textAlignment="center" />
 
     <ImageView
         android:id="@+id/gulliapproved"
         android:layout_width="225dp"
         android:layout_height="213dp"
-        android:layout_below="@+id/dennisbacktext"
+        android:layout_below="@+id/buttonBackToChat"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
         android:src="@drawable/approved"
         android:visibility="invisible" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/dennisbacktext"
+        android:id="@+id/buttonBackToChat"
+        android:layout_centerHorizontal="true"
+        android:text="Chat"/>
 
 </RelativeLayout>
