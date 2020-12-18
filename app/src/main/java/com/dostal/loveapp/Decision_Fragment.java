@@ -69,9 +69,8 @@ public class Decision_Fragment extends Fragment {
         });
 
         if (firstlogin()==true){
-            Decision_FragmentDirections.ActionDecisionFragmentToMainFragment actionDecisionFragmentToMainFragment=Decision_FragmentDirections.actionDecisionFragmentToMainFragment();
-            actionDecisionFragmentToMainFragment.setUserIdfromDecision(userId);
-            navController.navigate(actionDecisionFragmentToMainFragment);
+            Decision_FragmentDirections.actionDecisionFragmentToStartFragment();
+            navController.navigate(R.id.action_decision_Fragment_to_start_Fragment);
 
 
         }else{

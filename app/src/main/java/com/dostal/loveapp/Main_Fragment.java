@@ -52,10 +52,13 @@ public class Main_Fragment extends Fragment {
     final static String KEY_USERROLE = "role";
     final static String ROLE_ADMIN = "Admin";
 
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private final FirebaseFirestore updateUserDb = FirebaseFirestore.getInstance();
+    private final CollectionReference userRef = db.collection(PATHUSER);
+    private ArrayList<User> userarrayList;
 
 
 
-    final private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private final CollectionReference messageRef = db.collection(PATHMESSAGES);
 
     @Nullable
@@ -78,6 +81,8 @@ public class Main_Fragment extends Fragment {
         editTextTextMessage = view.findViewById(R.id.editTextTextMessage);
         messagesArrayList = new ArrayList<>();
         messagesTempArrayList = new ArrayList<>();
+
+        userarrayList = new ArrayList<>();
         messagesArrayList.clear();
         setAdapter();
 
@@ -96,6 +101,8 @@ public class Main_Fragment extends Fragment {
         buttonSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                userList(view);
+
                 while (userrole.equals("")) {
                     checkforWrite();
                 }
@@ -112,8 +119,8 @@ public class Main_Fragment extends Fragment {
         buttonSend.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                Toast.makeText(getContext(),"Test",Toast.LENGTH_SHORT).show();
-                changeUserStatusforOneMessage();
+                Toast.makeText(getContext(), "Test", Toast.LENGTH_SHORT).show();
+
                 return false;
             }
         });
@@ -137,32 +144,70 @@ public class Main_Fragment extends Fragment {
 
         });
 
-
+        userList(view);
         super.onViewCreated(view, savedInstanceState);
     }
 
-    private void changeUserStatusforOneMessage() {
-        FirebaseFirestore updateUserDb = FirebaseFirestore.getInstance();
-        CollectionReference updateUser=updateUserDb.collection("User");
-        //TODO updates mal in die User Klasse umziehen damit man es vereinheitlicht
+    private ArrayList<User> userList (View view){
+        userarrayList.clear();
+        userRef
+                .whereEqualTo("role", "User")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            User user = document.toObject(User.class);
+                            user.setId(document.getId());
+
+                            userarrayList.add(new User(user.getName(),user.getId(),user.isonetime()));
+
+                        }
+                        updateUserloop(userarrayList);
+                    }
+                });
+        return userarrayList;
+
     }
+    private void updateUser(String string){
+        DocumentReference updateUser = updateUserDb.collection("User").document(string);
+        updateUser.update("onetime", true).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Toast.makeText(getActivity(), "yay", Toast.LENGTH_LONG).show();
+
+            }
+        });
+
+    }
+
+
+    private void updateUserloop(ArrayList<User> arrayList){
+        for (int i=0;i<arrayList.size();i++){
+
+            Toast.makeText(getActivity(),arrayList.get(i).getName()+" "+arrayList.get(i).getId(),Toast.LENGTH_LONG).show();
+            updateUser(arrayList.get(i).getId());
+        }
+    }
+
 
     private void messagesToRecycler(ArrayList<Messages> messagesTempArrayList) {
 
         String message;
         String id;
-        if (messagesTempArrayList.size()==0){
+        if (messagesTempArrayList.size() == 0) {
 
             mAdapter.notifyDataSetChanged();
-            Toast.makeText(getActivity(),"leer",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "leer", Toast.LENGTH_SHORT).show();
 
         }
 
-        for (int i=messagesArrayList.size(); i < messagesTempArrayList.size(); i++) {
-            id=messagesTempArrayList.get(i).getSentuserId();
-            message=messagesTempArrayList.get(i).getMessage();
+        for (int i = messagesArrayList.size(); i < messagesTempArrayList.size(); i++) {
+            id = messagesTempArrayList.get(i).getSentuserId();
+            message = messagesTempArrayList.get(i).getMessage();
 
-            insertMessage(message,id);
+            insertMessage(message, id);
         }
 
     }
@@ -221,7 +266,7 @@ public class Main_Fragment extends Fragment {
         if (getArguments() != null) {
             Main_FragmentArgs args = Main_FragmentArgs.fromBundle(getArguments());
             String userId = args.getUserIdfromDecision();
-            DocumentReference userRef = db.collection(PATHUSER).document(userId);
+            DocumentReference userRef = db.collection("User").document(userId);
             userRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {

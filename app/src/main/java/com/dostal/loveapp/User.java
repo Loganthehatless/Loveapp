@@ -6,11 +6,21 @@ public class User {
     private String name;
     private String role;
     private String id;
-    private boolean isactive;
+    private boolean isonetime;
     private boolean isclaimed;
 
     public User() {
     }
+
+
+    public User(String name, String role, String id, boolean isonetime, boolean isclaimed) {
+        this.name = name;
+        this.role = role;
+        this.id = id;
+        this.isonetime = isonetime;
+        this.isclaimed = isclaimed;
+    }
+
     @Exclude
     public String getId() {
         return id;
@@ -20,10 +30,16 @@ public class User {
         this.id = id;
     }
 
-    public User(String name, String role, boolean isactive, boolean isclaimed) {
+    public User(String name, String id, boolean isonetime) {
+        this.name = name;
+        this.id = id;
+        this.isonetime = isonetime;
+    }
+
+    public User(String name, String role, boolean isonetime, boolean isclaimed) {
         this.name = name;
         this.role = role;
-        this.isactive = isactive;
+        this.isonetime = isonetime;
         this.isclaimed = isclaimed;
     }
 
@@ -51,11 +67,11 @@ public class User {
         this.role = role;
     }
 
-    public boolean isIsactive() {
-        return isactive;
+    public boolean isonetime() {
+        return isonetime;
     }
 
-    public void setIsactive(boolean isactive) {
-        this.isactive = isactive;
+    public void isonetime(boolean isonetime) {
+        this.isonetime = isonetime;
     }
 }

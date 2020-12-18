@@ -58,24 +58,25 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyView
         String userid = messagesArrayList.get(position).getSentuserId();
         if (userid.equals("jTHOsXTcn23zs6W7pEKZ")){
             ImageView.setImageResource(R.drawable.lukas);
-            holder.message.setText(message);
+
         }
         if (userid.equals("5Ch9GWqsiknebkY7SNNf")){
             ImageView.setImageResource(R.drawable.naruto);
-            holder.message.setText(message);
+
         }
         if (userid.equals("Fi4jdMOGaszUNEdqW3nQ")){
             ImageView.setImageResource(R.drawable.maik);
-            holder.message.setText(message);
+
         }
         if (userid.equals("4Qe1Fh8n2va6YPoxThRt")){
             ImageView.setImageResource(R.drawable.sandra);
-            holder.message.setText(message);
+
         }
         if (userid.equals("C0DgRDU9m8tUKbMww3YV")){
             ImageView.setImageResource(R.drawable.dennis);
-            holder.message.setText(message);
+
         }
+        holder.message.setText(message);
 
 
     }

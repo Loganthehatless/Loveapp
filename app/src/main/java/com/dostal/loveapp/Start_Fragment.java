@@ -47,7 +47,7 @@ public class Start_Fragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_start, container, false);
 
-        //simulation();
+        simulation();
 
         return view;
     }
@@ -114,12 +114,6 @@ public class Start_Fragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-
-
-    }
 
     private void changestatus(String getuserId) {
         FirebaseFirestore updateUserDb = FirebaseFirestore.getInstance();
