@@ -104,7 +104,7 @@ public class Main_Fragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                updateUserloop();
+                updateUserloop(true);
 
                 while (userrole.equals("")) {
                     checkforWrite();
@@ -137,8 +137,8 @@ public class Main_Fragment extends Fragment {
                     return;
                 }
                 for (QueryDocumentSnapshot documentSnapshot : value) {
-                    Messages messages = documentSnapshot.toObject(Messages.class);
-                    messagesTempArrayList.add(messages);
+                    //Messages messages = documentSnapshot.toObject(Messages.class);
+                    messagesTempArrayList.add(documentSnapshot.toObject(Messages.class));
 
 
                 }
@@ -161,9 +161,10 @@ public class Main_Fragment extends Fragment {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            User user = document.toObject(User.class);
-                            user.setId(document.getId());
-                            userarrayList.add(user);
+                            //User user = document.toObject(User.class);
+                            //user.setId(document.getId());
+                            //userarrayList.add(user);
+                            userarrayList.add(document.toObject(User.class).setId(document.getId()));
                             //userarrayList.add(new User(user.getName(),user.getId(),user.isonetime()));
                             //Toast.makeText(getActivity(),user.getName(),Toast.LENGTH_LONG).show();
                         }
@@ -172,9 +173,9 @@ public class Main_Fragment extends Fragment {
                 });
 
     }
-    private void updateUser(String string){
+    private void updateUser(String string,boolean bool){
         DocumentReference updateUser = updateUserDb.collection("User").document(string);
-        updateUser.update("onetime", false).addOnSuccessListener(new OnSuccessListener<Void>() {
+        updateUser.update("onetime", bool).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 Toast.makeText(getActivity(), "yay", Toast.LENGTH_LONG).show();
@@ -185,7 +186,7 @@ public class Main_Fragment extends Fragment {
     }
 
 
-    private void updateUserloop(){
+    private void updateUserloop(boolean bool){
         if (userarrayList.size()==0){
             userList();
         }
@@ -193,7 +194,7 @@ public class Main_Fragment extends Fragment {
         for (int i=0;i<userarrayList.size();i++){
             //Toast.makeText(getActivity(),"penis",Toast.LENGTH_LONG).show();
             Toast.makeText(getActivity(),userarrayList.get(i).getName()+" "+userarrayList.get(i).getId(),Toast.LENGTH_LONG).show();
-            updateUser(userarrayList.get(i).getId());
+            updateUser(userarrayList.get(i).getId(),bool);
         }
     }
 

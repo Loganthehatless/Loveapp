@@ -26,8 +26,9 @@ public class User {
         return id;
     }
 
-    public void setId(String id) {
+    public User setId(String id) {
         this.id = id;
+        return this;
     }
 
     public User(String name, String id, boolean isonetime) {
