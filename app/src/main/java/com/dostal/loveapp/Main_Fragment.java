@@ -85,6 +85,8 @@ public class Main_Fragment extends Fragment {
         userarrayList = new ArrayList<>();
         messagesArrayList.clear();
         setAdapter();
+        userList();
+
 
 
         editTextTextMessage.setOnTouchListener(new View.OnTouchListener() {
@@ -101,7 +103,8 @@ public class Main_Fragment extends Fragment {
         buttonSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                userList(view);
+
+                updateUserloop();
 
                 while (userrole.equals("")) {
                     checkforWrite();
@@ -144,11 +147,11 @@ public class Main_Fragment extends Fragment {
 
         });
 
-        userList(view);
+
         super.onViewCreated(view, savedInstanceState);
     }
 
-    private ArrayList<User> userList (View view){
+    private void userList (){
         userarrayList.clear();
         userRef
                 .whereEqualTo("role", "User")
@@ -160,34 +163,37 @@ public class Main_Fragment extends Fragment {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             User user = document.toObject(User.class);
                             user.setId(document.getId());
-
-                            userarrayList.add(new User(user.getName(),user.getId(),user.isonetime()));
-
+                            userarrayList.add(user);
+                            //userarrayList.add(new User(user.getName(),user.getId(),user.isonetime()));
+                            //Toast.makeText(getActivity(),user.getName(),Toast.LENGTH_LONG).show();
                         }
-                        updateUserloop(userarrayList);
+
                     }
                 });
-        return userarrayList;
 
     }
     private void updateUser(String string){
         DocumentReference updateUser = updateUserDb.collection("User").document(string);
-        updateUser.update("onetime", true).addOnSuccessListener(new OnSuccessListener<Void>() {
+        updateUser.update("onetime", false).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 Toast.makeText(getActivity(), "yay", Toast.LENGTH_LONG).show();
-
             }
         });
+
 
     }
 
 
-    private void updateUserloop(ArrayList<User> arrayList){
-        for (int i=0;i<arrayList.size();i++){
+    private void updateUserloop(){
+        if (userarrayList.size()==0){
+            userList();
+        }
 
-            Toast.makeText(getActivity(),arrayList.get(i).getName()+" "+arrayList.get(i).getId(),Toast.LENGTH_LONG).show();
-            updateUser(arrayList.get(i).getId());
+        for (int i=0;i<userarrayList.size();i++){
+            //Toast.makeText(getActivity(),"penis",Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(),userarrayList.get(i).getName()+" "+userarrayList.get(i).getId(),Toast.LENGTH_LONG).show();
+            updateUser(userarrayList.get(i).getId());
         }
     }
 
