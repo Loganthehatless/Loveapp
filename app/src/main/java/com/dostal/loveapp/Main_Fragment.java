@@ -58,7 +58,6 @@ public class Main_Fragment extends Fragment {
     private ArrayList<User> userarrayList;
 
 
-
     private final CollectionReference messageRef = db.collection(PATHMESSAGES);
 
     @Nullable
@@ -85,7 +84,6 @@ public class Main_Fragment extends Fragment {
         userarrayList = new ArrayList<>();
         messagesArrayList.clear();
         setAdapter();
-        userList();
 
 
 
@@ -104,14 +102,16 @@ public class Main_Fragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                updateUserloop(true);
 
                 while (userrole.equals("")) {
                     checkforWrite();
                 }
-                if (userrole.equals(ROLE_ADMIN)) {
+                if (userrole.equals(ROLE_ADMIN)|| HelperClass.checkOneTime(getUserId())) {
                     sendmessage(view);
-
+                    if (HelperClass.checkOneTime(getUserId()))
+                    {
+                        HelperClass.updateUser(getActivity(),getUserId(),false,"onetime");
+                    }
 
                 } else {
                     Toast.makeText(getActivity(), "Du darfst keine Nachrichten schicken", Toast.LENGTH_SHORT).show();
@@ -120,9 +120,11 @@ public class Main_Fragment extends Fragment {
             }
         });
         buttonSend.setOnLongClickListener(new View.OnLongClickListener() {
+
             @Override
             public boolean onLongClick(View v) {
-                Toast.makeText(getContext(), "Test", Toast.LENGTH_SHORT).show();
+                HelperClass.updateUserloop(true, getActivity(),"onetime");
+                //Toast.makeText(getContext(), "Test", Toast.LENGTH_SHORT).show();
 
                 return false;
             }
@@ -151,52 +153,6 @@ public class Main_Fragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
     }
 
-    private void userList (){
-        userarrayList.clear();
-        userRef
-                .whereEqualTo("role", "User")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            //User user = document.toObject(User.class);
-                            //user.setId(document.getId());
-                            //userarrayList.add(user);
-                            userarrayList.add(document.toObject(User.class).setId(document.getId()));
-                            //userarrayList.add(new User(user.getName(),user.getId(),user.isonetime()));
-                            //Toast.makeText(getActivity(),user.getName(),Toast.LENGTH_LONG).show();
-                        }
-
-                    }
-                });
-
-    }
-    private void updateUser(String string,boolean bool){
-        DocumentReference updateUser = updateUserDb.collection("User").document(string);
-        updateUser.update("onetime", bool).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Toast.makeText(getActivity(), "yay", Toast.LENGTH_LONG).show();
-            }
-        });
-
-
-    }
-
-
-    private void updateUserloop(boolean bool){
-        if (userarrayList.size()==0){
-            userList();
-        }
-
-        for (int i=0;i<userarrayList.size();i++){
-            //Toast.makeText(getActivity(),"penis",Toast.LENGTH_LONG).show();
-            Toast.makeText(getActivity(),userarrayList.get(i).getName()+" "+userarrayList.get(i).getId(),Toast.LENGTH_LONG).show();
-            updateUser(userarrayList.get(i).getId(),bool);
-        }
-    }
 
 
     private void messagesToRecycler(ArrayList<Messages> messagesTempArrayList) {
@@ -249,18 +205,14 @@ public class Main_Fragment extends Fragment {
             editTextTextMessage.setText("");
             return;
         }
-        if (getArguments() != null) {
-            Main_FragmentArgs args = Main_FragmentArgs.fromBundle(getArguments());
-            userId = args.getUserIdfromDecision();
-        }
-        Messages newMessage = new Messages(stringmessage, messagesTempArrayList.size(), userId);
+        Messages newMessage = new Messages(stringmessage, messagesTempArrayList.size(), getUserId());
 
-        //insertMessage(stringmessage,userId);
+
 
         messageRef.add(newMessage).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
             @Override
             public void onSuccess(DocumentReference documentReference) {
-                Toast.makeText(getActivity(), "Hinzugefügt", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getActivity(), "Hinzugefügt", Toast.LENGTH_SHORT).show();
             }
         });
         editTextTextMessage.setText("");
@@ -270,21 +222,36 @@ public class Main_Fragment extends Fragment {
     // TODO Ey bruder wir müssen noch checken wie wir das mit der Rolle machen viel spaß Zukunfts ich HDGDL
     private void checkforWrite() {
 
-        if (getArguments() != null) {
-            Main_FragmentArgs args = Main_FragmentArgs.fromBundle(getArguments());
-            String userId = args.getUserIdfromDecision();
-            DocumentReference userRef = db.collection("User").document(userId);
-            userRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                @Override
-                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    if (documentSnapshot.exists()) {
-                        userrole = documentSnapshot.getString(KEY_USERROLE);
-                        Toast.makeText(getActivity(), userrole, Toast.LENGTH_SHORT).show();
-                    }
+
+        DocumentReference singleuserRef = db.collection("User").document(getUserId());
+        singleuserRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()) {
+                    userrole = documentSnapshot.getString(KEY_USERROLE);
+                    Toast.makeText(getActivity(), userrole, Toast.LENGTH_SHORT).show();
                 }
-            });
-        }
+            }
+        });
+
 
     }
 
+
+    private String getUserId() {
+        if (userId.equals("")) {
+            setUserId();
+        }
+        //Toast.makeText(getActivity(),userId,Toast.LENGTH_LONG).show();
+        return userId;
+    }
+
+    private void setUserId() {
+        String string = "";
+        if (getArguments() != null) {
+            Main_FragmentArgs args = Main_FragmentArgs.fromBundle(getArguments());
+            string = args.getUserIdfromDecision();
+        }
+        this.userId = string;
+    }
 }
